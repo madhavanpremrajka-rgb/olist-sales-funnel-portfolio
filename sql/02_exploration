@@ -1,0 +1,124 @@
+-- 1. Total Leads, Closed Deals, and Conversion Rate
+SELECT
+    COUNT(DISTINCT m.mql_id)                         AS total_leads,
+    COUNT(DISTINCT cd.mql_id)                        AS total_closed,
+    ROUND(
+        COUNT(DISTINCT cd.mql_id)::NUMERIC /
+        COUNT(DISTINCT m.mql_id) * 100, 2
+    )                                                AS conversion_rate_pct
+FROM mql m
+LEFT JOIN closed_deals cd ON m.mql_id = cd.mql_id;
+
+-- 2. Conversion Rate by Lead Origin
+SELECT
+    COALESCE(m.origin, 'unknown')                    AS lead_origin,
+    COUNT(DISTINCT m.mql_id)                         AS total_leads,
+    COUNT(DISTINCT cd.mql_id)                        AS converted,
+    ROUND(
+        COUNT(DISTINCT cd.mql_id)::NUMERIC /
+        COUNT(DISTINCT m.mql_id) * 100, 2
+    )                                                AS conversion_rate_pct
+FROM mql m
+LEFT JOIN closed_deals cd ON m.mql_id = cd.mql_id
+GROUP BY 1
+ORDER BY conversion_rate_pct DESC;
+
+-- 3. Average Sales Cycle (Days from First Contact to Won)
+SELECT
+    COALESCE(m.origin, 'unknown')                    AS lead_origin,
+    COUNT(cd.mql_id)                                 AS deals_won,
+    ROUND(AVG(
+        EXTRACT(EPOCH FROM (cd.won_date - m.first_contact_date)) / 86400
+    ), 1)                                            AS avg_days_to_close,
+    ROUND(MIN(
+        EXTRACT(EPOCH FROM (cd.won_date - m.first_contact_date)) / 86400
+    ), 0)                                            AS min_days,
+    ROUND(MAX(
+        EXTRACT(EPOCH FROM (cd.won_date - m.first_contact_date)) / 86400
+    ), 0)                                            AS max_days
+FROM mql m
+JOIN closed_deals cd ON m.mql_id = cd.mql_id
+GROUP BY 1
+ORDER BY avg_days_to_close;
+
+-- 4. Top 10 Business Segments by Total Closed Deals 
+SELECT
+    business_segment,
+    COUNT(*)                                         AS total_deals,
+    ROUND(AVG(declared_monthly_revenue), 2)          AS avg_monthly_revenue,
+    ROUND(SUM(declared_monthly_revenue), 2)          AS total_declared_revenue
+FROM closed_deals
+WHERE business_segment IS NOT NULL
+GROUP BY 1
+ORDER BY total_deals DESC
+LIMIT 10;
+
+-- 5. Win Rate by Lead Type
+SELECT
+    cd.lead_type,
+    COUNT(*)                                         AS deals_won,
+    ROUND(
+        COUNT(*)::NUMERIC /
+        (SELECT COUNT(*) FROM closed_deals WHERE lead_type IS NOT NULL) * 100, 2
+    )                                                AS pct_of_wins
+FROM closed_deals cd
+WHERE lead_type IS NOT NULL
+GROUP BY 1
+ORDER BY deals_won DESC;
+
+-- 6. Monthly MQL Volume vs. Closed Deals (Trend Analysis)
+SELECT
+    DATE_TRUNC('month', m.first_contact_date)        AS lead_month,
+    COUNT(DISTINCT m.mql_id)                         AS new_leads,
+    COUNT(DISTINCT cd.mql_id)                        AS deals_closed,
+    ROUND(
+        COUNT(DISTINCT cd.mql_id)::NUMERIC /
+        NULLIF(COUNT(DISTINCT m.mql_id), 0) * 100, 2
+    )                                                AS monthly_conversion_pct
+FROM mql m
+LEFT JOIN closed_deals cd ON m.mql_id = cd.mql_id
+GROUP BY 1
+ORDER BY 1;
+
+-- 7. SDR / SR Performance (Who Closes the Most?)
+SELECT
+    sr_id,
+    COUNT(*)                                         AS deals_closed,
+    COUNT(DISTINCT business_segment)                 AS segments_covered,
+    ROUND(AVG(declared_monthly_revenue), 2)          AS avg_deal_revenue,
+    ROUND(SUM(declared_monthly_revenue), 2)          AS total_revenue
+FROM closed_deals
+GROUP BY 1
+ORDER BY deals_closed DESC
+LIMIT 15;
+
+-- 8. Behaviour Profile Impact on Revenue
+SELECT
+    lead_behaviour_profile,
+    COUNT(*)                                         AS total_deals,
+    ROUND(AVG(declared_monthly_revenue), 2)          AS avg_revenue,
+    ROUND(SUM(declared_monthly_revenue), 2)          AS total_revenue
+FROM closed_deals
+WHERE lead_behaviour_profile IS NOT NULL
+GROUP BY 1
+ORDER BY avg_revenue DESC;
+
+-- 9. Full Funnel View (Combined CTE for Tableau Export)
+WITH funnel AS (
+    SELECT
+        m.mql_id,
+        m.first_contact_date,
+        m.origin,
+        CASE WHEN cd.mql_id IS NOT NULL THEN 1 ELSE 0 END   AS is_converted,
+        cd.won_date,
+        cd.business_segment,
+        cd.lead_type,
+        cd.lead_behaviour_profile,
+        cd.business_type,
+        cd.declared_monthly_revenue,
+        cd.sr_id,
+        EXTRACT(EPOCH FROM (cd.won_date - m.first_contact_date)) / 86400 AS days_to_close
+    FROM mql m
+    LEFT JOIN closed_deals cd ON m.mql_id = cd.mql_id
+)
+SELECT * FROM funnel;
