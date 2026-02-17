@@ -1,0 +1,21 @@
+-- Full Funnel View (Combined CTE for Tableau Export)
+WITH funnel AS (
+    SELECT
+        m.mql_id,
+        m.first_contact_date,
+        m.origin,
+        CASE WHEN cd.mql_id IS NOT NULL THEN 1 ELSE 0 END   AS is_converted,
+        cd.won_date,
+        cd.business_segment,
+        cd.lead_type,
+        cd.lead_behaviour_profile,
+        cd.business_type,
+        cd.declared_monthly_revenue,
+        cd.sr_id,
+        EXTRACT(EPOCH FROM (cd.won_date - m.first_contact_date)) / 86400 AS days_to_close
+    FROM mql m
+    LEFT JOIN closed_deals cd ON m.mql_id = cd.mql_id
+)
+SELECT * FROM funnel;
+
+-- Export this result to CSV for Tableau 
