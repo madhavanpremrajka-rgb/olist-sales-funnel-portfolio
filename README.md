@@ -1,4 +1,4 @@
-# olist-sales-funnel-portfolio[README.md](https://github.com/user-attachments/files/25373335/README.md)
+# [README.md](https://github.com/user-attachments/files/25373335/README.md)
 # Olist Sales Funnel Analysis
 
 **From Lead to Revenue: A B2B Sales Funnel Performance Analysis**
