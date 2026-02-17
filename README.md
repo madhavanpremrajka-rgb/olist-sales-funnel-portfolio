@@ -9,7 +9,7 @@
 
 ---
 
-## 📊 Project Overview
+## Project Overview
 
 This portfolio project analyzes 8,000 marketing-qualified leads (MQLs) from Olist, a Brazilian B2B e-commerce marketplace, to understand the full sales funnel from initial contact to closed deal. The analysis identifies high-performing lead origins, sales cycle patterns, and rep/segment performance metrics.
 
@@ -21,7 +21,7 @@ This portfolio project analyzes 8,000 marketing-qualified leads (MQLs) from Olis
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 olist-sales-funnel/
@@ -42,7 +42,7 @@ olist-sales-funnel/
 
 ---
 
-## 🎯 Key Findings
+## Key Findings
 
 - **10.5% Overall Conversion Rate** – 842 of 8,000 MQLs convert to closed deals
 - **Organic search drives volume** (2,296 leads) but direct and referral traffic convert at higher rates – a classic quality vs. quantity trade-off
@@ -52,7 +52,7 @@ olist-sales-funnel/
 
 ---
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **Database:** PostgreSQL (or SQLite)
 - **SQL:** Complex JOINs, CTEs, window functions, date calculations
@@ -86,7 +86,7 @@ olist-sales-funnel/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Set Up Database
 ```bash
@@ -112,7 +112,7 @@ This generates `funnel_master.csv` for your Tableau visualizations.
 
 ---
 
-## 📊 SQL Queries Included
+## SQL Queries Included
 
 ### Exploration (02_exploration.sql)
 - Overall funnel conversion rate
@@ -132,7 +132,7 @@ Creates a denormalized `funnel` table with all dimensions and metrics for Tablea
 
 ---
 
-## 📈 Tableau Dashboards (In Progress)
+## Tableau Dashboards (In Progress)
 
 ### Dashboard 1: Executive Funnel Overview
 - Total leads, conversions, and conversion rate % (KPI cards)
@@ -154,7 +154,7 @@ Creates a denormalized `funnel` table with all dimensions and metrics for Tablea
 
 ---
 
-## 🔑 Key Insights for Decision-Making
+## Key Insights for Decision-Making
 
 **For Marketing:**
 - Organic search generates the most leads but has lower conversion – consider nurturing strategies
@@ -171,7 +171,7 @@ Creates a denormalized `funnel` table with all dimensions and metrics for Tablea
 
 ---
 
-## 📚 Skills Demonstrated
+## Skills Demonstrated
 
 - **SQL:** INNER/LEFT JOINs, CTEs, window functions, date arithmetic, aggregations, filtering
 - **Data Analysis:** Funnel analysis, cohort analysis, performance benchmarking
@@ -180,7 +180,7 @@ Creates a denormalized `funnel` table with all dimensions and metrics for Tablea
 
 ---
 
-## 📝 How to Use This Repo
+## How to Use This Repo
 
 1. Clone the repo and navigate to the project folder
 2. Load the CSV data into your database using `sql/01_setup.sql`
@@ -191,7 +191,7 @@ Creates a denormalized `funnel` table with all dimensions and metrics for Tablea
 
 ---
 
-## 🤝 Portfolio Context
+## Portfolio Context
 
 This project was built to demonstrate:
 - **SQL proficiency** in complex data modeling and exploration
@@ -209,4 +209,4 @@ For questions about the analysis, SQL queries, or Tableau approach, feel free to
 
 ---
 
-**Status:** SQL analysis complete ✓ | Tableau dashboards in progress 🔄
+**Status:** SQL analysis complete | Tableau dashboards in progress | Final report in progress
